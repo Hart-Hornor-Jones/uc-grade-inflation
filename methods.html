@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Methods and sources — reading high-school grades</title>
+<style>
+/* The Leal / uc-waiver-explorer design, extended to the whole site.
+   All-bold Helvetica, black on pure white, sharp corners, 2.5px black boxes,
+   2.6px black axes with outward ticks and no gridlines, circus-bright primaries.
+   Light only. Do not reintroduce grays, rounded corners, or regular weights. */
+:root{
+  --red:#FB0207; --blue:#0000FF; --green:#118040; --greenedge:#108080;
+  --orange:#FF8C00; --purple:#7A00CC; --magenta:#E6007E; --teal:#009192;
+  --brown:#8B4A00; --gray:#555555;
+  --bw:2.5px;              /* the box border weight, everywhere */
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:#FFFFFF;color:#000;
+  font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-weight:700;
+  font-size:13.5px;line-height:1.5}
+a{color:#000;text-decoration:underline;text-underline-offset:2px}
+b,strong{font-weight:700}
+h1{font-size:23px;line-height:1.3;margin:0 0 8px;font-weight:700;text-align:center}
+section h1{font-size:19px;margin-top:4px}
+h2{font-size:15px;margin:38px 0 4px;font-weight:700;text-transform:uppercase;letter-spacing:.02em}
+h3{font-size:13.5px;margin:20px 0 4px;font-weight:700}
+.wrap{max-width:1180px;margin:0 auto;padding:18px 22px 80px}
+.famq{font-size:11px;letter-spacing:.08em;text-transform:uppercase;text-align:center;margin:10px 0 4px}
+.dek{color:#000;font-size:13px;margin:0 auto 6px;max-width:920px}
+.fine{font-size:11.5px;line-height:1.5}
+.sub{font-size:12px;margin:2px 0 10px}
+hr{border:0;border-top:var(--bw) solid #000;margin:26px 0}
+
+/* ---- site header and tabs ---- */
+.sitehead{max-width:1180px;margin:0 auto;padding:26px 22px 0;text-align:center}
+.masthead{font-size:11px;letter-spacing:.09em;text-transform:uppercase;margin-bottom:10px}
+.sitehead .dek{text-align:left}
+.tabs{max-width:1180px;margin:16px auto 0;padding:0 22px;display:flex;flex-wrap:wrap;
+  gap:0;align-items:stretch}
+.tabbtn{display:flex;align-items:center;text-decoration:none;color:#000;font-size:12px;
+  font-weight:700;text-transform:uppercase;letter-spacing:.02em;padding:7px 12px;
+  border:var(--bw) solid #000;background:#fff;margin:0 0 8px -2.5px}
+.tabbtn:first-child{margin-left:0}
+.tabbtn:hover{text-decoration:underline}
+.tabbtn[aria-pressed=true]{background:#000;color:#fff;text-decoration:none}
+.tabbtn .tn{margin-right:6px}
+.methlink{margin-left:auto;display:flex;align-items:center;font-size:12px;color:#000;
+  padding:7px 4px 7px 14px;margin-bottom:8px}
+section[hidden]{display:none}
+
+.layout{display:grid;grid-template-columns:266px 1fr;gap:30px;align-items:start}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+
+/* ---- sidebar control card (the Leal panelbox) ---- */
+.side{position:sticky;top:12px;background:#fff;border:var(--bw) solid #000;
+  padding:14px 16px 16px;font-size:12.5px}
+.side h4{margin:16px 0 6px;font-size:12px;letter-spacing:.02em;text-transform:uppercase;font-weight:700}
+.side h4:first-child{margin-top:0}
+.side label{display:block;margin:6px 0 3px;font-size:12px}
+.side select,.side input[type=text],.side input[type=number]{width:100%;font:inherit;
+  font-weight:700;font-size:12px;padding:4px 6px;border:2px solid #000;border-radius:0;
+  background:#fff;color:#000}
+.side input[type=range]{width:100%;accent-color:#000;margin:5px 0 0}
+input{accent-color:#000}
+.chips{display:flex;flex-wrap:wrap;gap:0;margin-top:4px}
+.chip{border:2px solid #000;background:#fff;border-radius:0;padding:3px 9px;cursor:pointer;
+  font:inherit;font-weight:700;font-size:11.5px;color:#000;user-select:none;
+  margin:0 5px 5px 0}
+.chip[aria-pressed=true]{background:#000;border-color:#000;color:#fff}
+.chip.sw[aria-pressed=true]{color:#fff}
+.rowline{display:flex;gap:6px;align-items:center}
+.rowline>*{flex:1}
+.note{font-size:11px;font-weight:700;margin-top:6px;line-height:1.45}
+button.act{font:inherit;font-weight:700;font-size:11.5px;padding:4px 11px;
+  border:2px solid #000;border-radius:0;background:#fff;cursor:pointer;color:#000}
+button.act:hover{background:#000;color:#fff}
+
+/* ---- figures ---- */
+figure{margin:0 0 10px}
+figure.figinset{max-width:430px;margin-top:14px}   /* the small trace beside a main figure */
+.figtitle{font-size:13.5px;font-weight:700;margin:0 0 1px}
+.figsub{font-size:12px;margin:0 0 8px}
+svg{display:block;width:100%;height:auto;overflow:visible}
+svg text{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-weight:700;fill:#000}
+.ax line,.ax path{stroke:#000;shape-rendering:crispEdges}
+.ax text{fill:#000;font-size:12px}
+.axlab{fill:#000;font-size:12.5px}
+.grid line{stroke:transparent}
+.zeroline{stroke:#000;stroke-width:2.6}
+.regime rect{fill:#000;opacity:.05}
+.regime text{fill:#000;font-size:10.5px}
+
+/* ---- readouts ---- */
+.readout{display:flex;flex-wrap:wrap;gap:0;background:#fff;border:var(--bw) solid #000;
+  margin:10px 0 4px}
+.readout>div{flex:1 1 130px;padding:9px 12px;border-right:var(--bw) solid #000}
+.readout>div:last-child{border-right:0}
+.readout .k{font-size:10.5px;text-transform:uppercase;letter-spacing:.05em}
+.readout .v{font-size:21px;line-height:1.2;margin-top:2px;letter-spacing:-.01em}
+.readout .n{font-size:11px;margin-top:1px}
+
+table.dense{border-collapse:collapse;width:100%;font-size:12px;font-weight:700}
+table.dense th{text-align:right;padding:5px 8px;border-bottom:var(--bw) solid #000;color:#000;
+  font-weight:700;font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;
+  white-space:nowrap;cursor:pointer}
+table.dense th:first-child,table.dense td:first-child{text-align:left}
+table.dense td{padding:4px 8px;border-bottom:1px solid #bbb;text-align:right;white-space:nowrap}
+table.dense tbody tr{cursor:pointer}
+table.dense tbody tr:hover{background:#eee}
+table.dense tbody tr[aria-selected=true]{background:#000;color:#fff}
+.scroll{max-height:340px;overflow:auto;background:#fff;border:var(--bw) solid #000}
+
+/* ---- floating text (the Leal tooltip) ---- */
+.tip{position:fixed;z-index:60;background:#fff;border:var(--bw) solid #000;border-radius:0;
+  padding:9px 12px;max-width:300px;pointer-events:none;
+  font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-weight:700;
+  font-size:12px;line-height:1.5;color:#000}
+.tip b{font-weight:700}
+.tip .muted{color:var(--gray)}
+
+.q{display:inline-block;width:15px;height:15px;line-height:12px;text-align:center;
+  border:2px solid #000;border-radius:0;color:#000;font-size:10px;font-weight:700;
+  cursor:help;vertical-align:2px;margin-left:5px;user-select:none}
+.q:hover{background:#000;color:#fff}
+
+.flag{background:#fff;border:var(--bw) solid #000;padding:8px 11px;margin:10px 0;
+  font-size:11.5px;font-weight:700;line-height:1.5;color:#000}
+.flag b{text-transform:uppercase;font-size:11px}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:12px;font-weight:700;margin:6px 0 0}
+.legend span{display:flex;align-items:center;gap:6px}
+.swatch{width:15px;height:11px;display:inline-block}
+.foot{margin-top:36px;padding-top:12px;border-top:var(--bw) solid #000;
+  font-size:11.5px;line-height:1.55;text-align:center}
+
+/* ---- placeholder sections ---- */
+.pending{background:#fff;border:var(--bw) dashed #000;padding:16px 20px;margin:14px auto;
+  font-size:12.5px;max-width:760px}
+
+/* ---- selectable legend (a click makes a series focal) ---- */
+.legend span.sel{cursor:pointer;padding:1px 6px;border:1.4px solid transparent}
+.legend span.sel:hover{border-color:#555555}
+.legend span.sel[aria-pressed=true]{border-color:#000000;font-weight:700}
+.legend span.static{cursor:default}
+/* labels that sit inside a plot need to survive whatever is under them */
+.halo{paint-order:stroke;stroke:#FFFFFF;stroke-width:3.5px;stroke-linejoin:round}
+
+</style>
+<style>
+.mwrap{max-width:820px;margin:0 auto;padding:26px 22px 90px}
+.mwrap h2{margin-top:30px}
+.mwrap p{color:#000;font-size:13.5px;line-height:1.6;margin:6px 0 10px}
+.mwrap b{color:#000}
+</style>
+</head><body>
+<div class="mwrap">
+<div class="masthead">Reading high-school grades &middot; methods and sources</div>
+<h1>How the figures are built</h1>
+<p class="dek"><a href="index.html">Back to the figures</a></p>
+
+<h2>The grade measure</h2>
+<p>The University of California publishes, for each California high school and each of its nine undergraduate
+campuses, the mean recalculated grade point average of that school&rsquo;s applicants, of the subset admitted, and
+of the subset enrolled. It is the University&rsquo;s own weighted, capped calculation over tenth- and
+eleventh-grade A&ndash;G coursework, not the school&rsquo;s transcript average. The series runs from the graduating
+class of 1994 to the class of 2025 and covers 1,607 California high schools. Campus labels are as repaired on
+30 July 2026.</p>
+<p>A rise in the recalculated average can come from easier grading or from more, and more heavily weighted,
+coursework. Both are real changes in what a transcript says; neither is separable in these data. Every figure
+on the site is a school mean, not a distribution of students, and none of them describes students who never
+applied to the University.</p>
+
+<h2>The Universitywide pool</h2>
+<p>Alongside the nine campuses the University publishes a Universitywide figure: one aggregate over the whole
+system, in which a student who applies to several campuses is counted once. It is the pool used by default on
+the opening tab, because it is the closest thing in these data to &ldquo;this school&rsquo;s applicants to the
+University,&rdquo; and because a single campus is a self-selected slice whose depth changes over time. It is
+labeled Universitywide throughout and is never a campus.</p>
+
+<h2>Class dating</h2>
+<p>Every year on every axis is a graduating class, which is also the University admission year: the class of
+2025 applied in fall 2024 and entered in fall 2025. Each test is placed on the class that sat it &mdash;
+eleventh-grade tests are shifted forward one year, the tenth-grade examination two, and senior-year tests not
+at all.</p>
+
+<h2>Suppression</h2>
+<p>The University masks small cells. A school-campus-year with too few applicants, admitted or enrolled
+students reports no grade average; those cells are absent, not zero. The admitted average is masked more often
+than the applicant average, because admitted counts are smaller. The applicant thresholds in each sidebar trade
+coverage for stability; a school missing a figure in one class drops out of that class only. Wherever the site
+pools across classes, a class contributes only if the count and the average are both observed &mdash; a
+suppressed cell is never carried into an average as a zero, and a ratio is never formed from a numerator and a
+denominator observed in different years.</p>
+
+<h2>Why the campus-slice comparison holds the school constant</h2>
+<p>A school&rsquo;s Berkeley applicants and its Merced applicants are drawn from one class in one year, taught by
+the same teachers under the same grading policy. Any change in what the school actually teaches, or in who
+enrolls there, moves both slices; only the depth of the slice differs, which is why that figure needs no test
+score to interpret. The slices are self-selected, though, and their composition can change: a campus whose
+applicant pool deepens will see its mean fall for that reason alone &mdash; which works against a rise, not for
+it. The readout on that tab reports how each pool&rsquo;s depth changed.</p>
+
+<h2>The ceiling</h2>
+<p>The recalculated scale has a hard cap, so equal genuine improvement produces unequal measured gains at
+different starting points: a pool that already sits near the cap has less room to record any rise. A downward
+slope of change against starting level therefore measures compression &mdash; a loss of the resolution one
+grade point once carried &mdash; and is read here as that, not as proof of any particular cause.</p>
+
+<h2>The separation measure and the derived denied pool</h2>
+<p>The University publishes, for one high school, one campus and one graduating class, the applicant mean, the
+admitted mean and both counts. The denied group is the arithmetic remainder, so its mean follows exactly: with
+<i>A</i> applicants at mean <i>g<sub>A</sub></i> and <i>D</i> admitted at mean <i>g<sub>D</sub></i>, the
+<i>R&nbsp;=&nbsp;A&nbsp;&minus;&nbsp;D</i> denied students sit at
+<i>g<sub>R</sub>&nbsp;=&nbsp;(A&middot;g<sub>A</sub>&nbsp;&minus;&nbsp;D&middot;g<sub>D</sub>)&nbsp;/&nbsp;R</i>.
+The headline series on the crowded-top tab is the separation <i>g<sub>D</sub>&nbsp;&minus;&nbsp;g<sub>R</sub></i>,
+admitted minus denied: the distance the record actually contains between the students a campus took from a
+school and the students it turned away there. The older figure, admitted minus applicants, is linked to it
+exactly &mdash; <i>g<sub>D</sub>&nbsp;&minus;&nbsp;g<sub>A</sub>&nbsp;=&nbsp;(1&nbsp;&minus;&nbsp;p)&middot;(g<sub>D</sub>&nbsp;&minus;&nbsp;g<sub>R</sub>)</i>,
+where <i>p</i> is the admission rate &mdash; which is why it shrinks wherever admission rates are high even if
+nothing about grading changes. Both are drawn; the identity is asserted at machine precision in the
+verification chain.</p>
+<p>The published means carry two decimals, so the derived denied mean inherits a rounding error amplified by
+<i>A/R</i>: the worst case for the separation is
+0.005&nbsp;&times;&nbsp;(1&nbsp;+&nbsp;(A+D)/R). Cells below the denied-count threshold are withheld; every
+plotted separation carries its bound as a band; and in the separation-against-selectivity scatter a point whose
+bound exceeds 0.10 grade points is drawn hollow and left out of the fit rather than dropped silently. Because
+separation&nbsp;=&nbsp;gap&nbsp;/&nbsp;(1&nbsp;&minus;&nbsp;p), it climbs with the admission rate by arithmetic
+alone, so that scatter draws the curve the arithmetic would produce with the gap held constant beside the fitted
+tilt, and the subtitle reports both.</p>
+<p>The prediction view on the same tab is a correlation across schools within one class: whether a school whose
+applicants carry higher grades gets a higher share of them admitted. It mixes what a campus rewards with where
+its applicants come from, and it is not a measure of any individual student&rsquo;s chances. It is included
+because it is the quantity most often quoted, not because it is the cleanest.</p>
+
+<h2>The anchored estimate</h2>
+<p>For each high school, the yardstick-bench estimate is the change in its pool grade point average between two
+periods, minus the change in an achievement anchor multiplied by a rate: <i>I&nbsp;=&nbsp;&Delta;G&nbsp;&minus;&nbsp;&beta;&middot;&Delta;C</i>.
+Setting the rate to zero returns the raw change. The rate is estimated from levels, not from changes:
+estimating it from the changes themselves would fit away the very thing being measured, so it is taken from the
+cross-section &mdash; how much higher a school&rsquo;s pool average runs for each unit of measured achievement
+within one period &mdash; or set by hand.</p>
+
+<h2>Two nulls worth stating</h2>
+<p><b>Composition.</b> The set of schools sending applicants changes over time, so the aggregate rise could in
+principle be schools entering and leaving the data rather than anything changing inside schools. It is not:
+recomputed over only the schools present in both windows, the default-window aggregate rise moves by
+&minus;0.005 grade points. Every headline estimand on the site is within-school first for the same reason
+&mdash; a quantity built inside each school before schools are averaged cannot be moved by the mix of
+schools.</p>
+<p><b>Course mix.</b> Advanced Placement expansion is not what separates grade-rising schools from the rest:
+splitting schools by whether their Advanced Placement volume expanded, the anchored estimate is the same in
+both halves, and its correlation with the expansion is +0.04. More weighted coursework raises the recalculated
+average mechanically, but changes in how much of it schools offer do not track which schools rose.</p>
+
+<h2>The two references on the opening tab</h2>
+<p>The opening tab sets each school&rsquo;s grade change against its change in one achievement anchor, and
+offers two lines to read that scatter against. The <b>empirical relationship</b> is the weighted least-squares
+line fitted to these very schools. It carries an intercept, so the average distance from it is zero by
+construction and only the spread of those distances is informative; what the line itself reports is its height
+where the anchor did not move, which is the part of the grade movement that no movement in measured achievement
+accompanies. <b>Equal standardized movement</b> is a different object: a line through the origin whose slope is
+the ratio of the two spreads, so a school that moved one standard deviation on the anchor is drawn as having
+moved one standard deviation on grades. That line is a claim stated in advance rather than one read off the
+data, so the average distance from it is a quantity in its own right. The two encode different assertions and
+are not interchangeable.</p>
+<p>Neither line is a causal estimate. A school&rsquo;s measured achievement and its grades are both consequences
+of what happened at the school, and a distance from either line names an unexplained residual, not a cause.</p>
+
+<h2>The achievement anchors</h2>
+<p>Two families of instrument, which are not the same. The census tests cover essentially every eleventh
+grader, including students who will not finish twelfth grade and never apply anywhere. The SAT, ACT and
+Advanced Placement measures cover only self-selected testers &mdash; much closer to the students who submit
+grade point averages to the University, but the share of a school sitting a test also changed over the years,
+which moves the school mean on its own. Across schools the two families correlate about 0.79, so a census
+anchor absorbs somewhat less of any real achievement change than a college-bound anchor would; their difference
+is itself a stable school trait, not noise.</p>
+<p>One census instrument is used per class: the high-school exit examination for the classes of 2003 and 2015,
+the eleventh-grade standards test for 2004 to 2014, and the current state assessment from 2016 onward. Raw
+levels are not comparable across those seams; the standardized version &mdash; each school&rsquo;s position
+within its own class and instrument &mdash; is, and the bench warns whenever the two chosen periods rest on
+different instruments. No census measure exists for the classes of 1994 to 2002 or 2021 and 2022, when the
+tests were not given or were not representative. The college-bound measures end with the class of 2020, when
+the state stopped publishing them. Standardized positions at schools with few testers or few applicants move a
+lot from year to year for reasons that have nothing to do with teaching.</p>
+
+<h2>Admission regimes</h2>
+<p>Test scores were required for admission through the class of 2020, optional for the class of 2021, and not
+considered from the class of 2022. Shaded bands mark this on every time axis. The change of regime is not the
+only thing that happened in those years, and nothing on this site is framed as evidence about test policy in
+either direction. The grade rise itself long predates those years: the anchored estimates for windows ending
+with the class of 2019 are positive everywhere the anchors reach, and the chain-linked index climbs through the
+whole record.</p>
+
+<h2>The share of high-need pupils</h2>
+<p>The school trait offered as a filter on the cross-school views is the state&rsquo;s unduplicated count of
+pupils who are low-income, English learners, or foster youth, as a share of enrollment &mdash; a need measure
+broader than any single one of those categories, counted once per pupil. Two facts about it belong here rather
+than in a caveat box.</p>
+<p>First, across schools, admission rates track it. In the pooled recent classes the correlation between a
+school&rsquo;s measured achievement and its admission rate at the selective campuses largely vanishes when the
+share of high-need pupils is held fixed &mdash; at San Diego from &minus;0.52 to &minus;0.03, at Berkeley from
+&minus;0.21 to +0.02 &mdash; so a cross-school gradient in admission outcomes on these pages should be read as
+tracking school need before it is read as tracking anything else. That is a statement about what admission
+decisions are keyed to across schools, not about any figure built within schools over time, which the mix of
+schools cannot move.</p>
+<p>Second, that control does not transfer to outcomes. For a relationship between school achievement and what
+happens to students later &mdash; graduation, first-year college performance &mdash; the disadvantages the
+measure counts are part of the mechanism producing the relationship, not a nuisance lying across it. Holding
+need fixed there answers a narrower question &mdash; whether achievement still predicts among schools of
+similar need &mdash; and a gradient that shrinks under that restriction has been narrowed, not refuted. The
+filter is provided on the cross-school views because readers will ask; what is concluded from it differs by
+view, as above.</p>
+
+<h2>Corroboration from the other public system</h2>
+<p>The California State University publishes the mean high-school grade point average of its entering freshmen
+by campus. From fall 2021 through fall 2025 the campus means run from about 4.0 at San Luis Obispo down to
+about 3.1 at Dominguez Hills while the systemwide mean holds flat near 3.5 &mdash; the same picture the
+University of California&rsquo;s campus slices give, read from a second system: pools of different depth sit at
+very different grade levels even as the whole moves little. The same source carries the counterweight this site
+states wherever it applies: within one CSU campus and one entering year, an additional point of high-school
+grade average predicts very nearly one additional point of first-year college grade average (a slope of about
+1.0). Pooled across campuses that slope falls to about 0.7, entirely because more selective campuses grade
+harder. Where the scale still has room, a grade point average still predicts.</p>
+
+<h2>The thirds of the entering class</h2>
+<p>Tab 4 leaves the high-school data behind entirely. Its numbers are the University&rsquo;s own
+Graduation Dashboard, &ldquo;Grad. rates by GPA groups&rdquo;: each entering freshman class is cut into three
+equal groups by the recalculated grade point average the University computes at entry, and the dashboard
+publishes the boundaries, the counts inside each group, and how many of those students had a degree after
+four, five and six years. The same boundaries are applied at every campus, which this build verified in all
+twelve cohort years.</p>
+<p>Three points of care. <b>The boundaries move.</b> They are cut fresh from each class, so a band is an
+ordinal position in its own class, not a fixed standard: the top third of 2021 is not the same grade point
+average as the top third of 2010, and no comparison here assumes it is. <b>Totals are a lower bound.</b> The
+dashboard publishes no total-only view for these years; every figure arrives split by Pell Grant status, by
+first-generation status, or by ethnicity, and each split drops its own unknown cases. Totals here are the Pell
+Grant split summed, the least lossy of the three, and are labeled as a lower bound. Rates are unaffected, since
+each band&rsquo;s rate is its own graduates over its own entrants. <b>Cohorts are only shown at horizons they
+have reached.</b> Six-year rates end with the class entering 2019 and five-year rates with 2020; those lines
+stop rather than falling. The classes entering in 2020 and 2021 met the pandemic while enrolled and are not
+comparable with earlier classes for reasons unrelated to grades.</p>
+
+<h2>Provenance of the campus labels</h2>
+<p>The University&rsquo;s dashboard of grade averages by school reads its campus selection one position apart
+from its counts tab; read naively, every campus-named grade series comes out attached to the neighboring
+campus, and the systemwide aggregate comes out under Berkeley&rsquo;s name. The offset was diagnosed on 25 July
+2026 and the extraction pipeline repaired on 30 July 2026; every campus-named number on this site is from the
+repaired extract. A study circulated on 9 July 2026 predates the repair: its Universitywide figures were right,
+and every campus name attached to a number in it was not. The verification chain reproduces that study&rsquo;s
+headline change (+0.0955; this build computes +0.0958) from the Universitywide pool, which is the pool the
+study was in fact describing.</p>
+
+<h2>Data inventory</h2>
+<p><b>Grades:</b> University of California Information Center, freshman admissions by California high school
+&mdash; applicant, admitted and enrolled mean recalculated grade point averages and counts, by school, campus
+and Universitywide, graduating classes 1994&ndash;2025; 2026 extract, campus labels as repaired 30 July 2026.
+<b>Graduation:</b> University of California Graduation Dashboard (final rates), &ldquo;Grad. rates by GPA
+groups&rdquo;, freshman entry cohorts 2010&ndash;2021, all residencies, June 2026 vintage; six-year rates
+mature through the 2019 cohort, five-year through 2020.
+<b>Census achievement:</b> California Department of Education school research files &mdash; the current state
+assessment (used for the classes of 2016&ndash;2020 and 2023&ndash;2025), the eleventh-grade standards test
+(classes 2004&ndash;2014), and the high-school exit examination (classes 2003 and 2015).
+<b>College-bound achievement:</b> California Department of Education SAT, ACT and Advanced Placement school
+files, through the class of 2020, after which the state stopped publishing them.
+<b>School traits:</b> the share of high-need pupils is the state&rsquo;s unduplicated pupil count (low-income,
+English learner, or foster youth), as a share of enrollment, from the state&rsquo;s school funding data.
+<b>Corroboration:</b> California State University institutional dashboards, entering-freshman high-school grade
+averages by campus (fall 2021&ndash;2025) and first-year college grade averages (entering cohorts fall
+2021&ndash;2024).
+Both data payloads beside this page were prepared on 8 August 2026.</p>
+<p>Every page is self-contained apart from the two data files in the same folder: no server, no network,
+nothing loaded from elsewhere.</p>
+</div>
+</body></html>

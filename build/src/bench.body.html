@@ -1,0 +1,82 @@
+<div class="wrap">
+<p class="famq">Calibration &middot; how much does the answer depend on the choice of yardstick?</p>
+<h1>The yardstick bench</h1>
+<p class="dek">Grades rose. Whether that is inflation depends entirely on three choices, and reasonable people make them differently: which two periods to compare, which applicants to look at, and what to accept as an independent measure of how much students actually knew. Every one of those choices is a visible control here, and the figures show what survives each one.</p>
+<p class="dek">Nothing here is fitted to produce an answer. With the achievement anchor set to <em>none</em>, the figure is the raw change; with an anchor on, the estimate moves by exactly the amount that anchor explains &mdash; no more.</p>
+
+<div class="layout">
+<aside class="side" id="side">
+  <h4>Compare two periods</h4>
+  <label>Earlier classes</label>
+  <div class="rowline"><select id="p0a"></select><select id="p0b"></select></div>
+  <label>Later classes</label>
+  <div class="rowline"><select id="p1a"></select><select id="p1b"></select></div>
+
+  <h4>Which applicants</h4>
+  <label>Pool</label><select id="campus"></select>
+  <div class="note">Each campus&rsquo;s applicants are a different slice of the same classes. The Merced slice reaches furthest down; the Berkeley slice sits at the top.</div>
+  <label>Grade series</label>
+  <select id="ser">
+    <option value="app">applicants</option>
+    <option value="adm">admitted students</option>
+    <option value="enr">enrolled students</option>
+  </select>
+
+  <h4>Achievement anchor<span class="q" data-help="For each high school, the estimate is the change in its pool grade point average between the two periods, minus the change in the anchor multiplied by a rate: I = &Delta;G &minus; &beta;&middot;&Delta;C. Setting the rate to zero returns the raw change. No anchor can separate easier grading from a richer or more heavily weighted course load &mdash; both raise the recalculated average &mdash; and every figure here is a school mean, not a distribution of students.">?</span></h4>
+  <select id="ruler">
+    <option value="none">none &mdash; report the raw change</option>
+    <option value="census">census test of all students, in its own units</option>
+    <option value="censusz">census test of all students, standardized</option>
+    <option value="zsat">SAT, school mean among testers</option>
+    <option value="act">ACT, share of testers at 21 or better</option>
+    <option value="appass">Advanced Placement, share of exams at 3 or better</option>
+    <option value="apge3">Advanced Placement, passing exams per senior</option>
+  </select>
+  <div class="note" id="rulernote"></div>
+  <label>How much a grade point is worth per unit of the anchor<span class="q" data-help="Estimating this rate from the changes themselves would fit away the very thing being measured. It is taken instead from the cross-section &mdash; how much higher a school&rsquo;s pool average runs for each unit of measured achievement, in levels, within one period &mdash; which keeps the two independent. It can also be set by hand, to watch the answer move.">?</span></label>
+  <select id="beta">
+    <option value="pre">estimate from the earlier period</option>
+    <option value="post">estimate from the later period</option>
+    <option value="zero">nothing &mdash; ignore the anchor</option>
+    <option value="manual">set by hand</option>
+  </select>
+  <input type="range" id="betaman" min="0" max="200" step="1" value="50" style="display:none">
+  <div class="note" id="betanote"></div>
+
+  <h4>Which schools</h4>
+  <label>County</label><select id="county"></select>
+  <label>Share of high-need pupils</label>
+  <select id="upp"><option value="">every school</option><option value="0">lower third</option><option value="1">middle third</option><option value="2">upper third</option></select>
+  <label>School achievement</label>
+  <select id="ach"><option value="">every school</option><option value="0">lower third</option><option value="1">middle third</option><option value="2">upper third</option></select>
+  <label>Fewest applicants, each period<span class="q" data-help="The University masks small cells, so a school-campus-year with too few applicants reports no grade average. Raising this threshold trades coverage for stability.">?</span></label>
+  <input type="number" id="gate" value="30" min="1" max="400" step="5">
+  <label>Weighting</label>
+  <select id="wt"><option value="a">by number of applicants</option><option value="s">each school counts once</option></select>
+  <p style="margin-top:12px"><button class="act" id="reset">Reset every control</button></p>
+</aside>
+
+<main>
+  <div class="readout" id="ro"></div>
+  <div id="flags"></div>
+
+  <h2>What each control takes away<span class="q" data-help="Start from the number anyone would quote — every applicant in the state, pooled. Then subtract, one at a time, the part explained by a changing mix of schools, by a changing depth of the applicant pool, and by measured achievement. What is left is the estimate.">?</span></h2>
+  <p class="sub" id="s1"></p>
+  <figure><svg id="fig1" viewBox="0 0 900 330" role="img" aria-label="Successive subtractions from the raw change"></svg></figure>
+
+  <h2>School by school<span class="q" data-help="The distribution of the remaining estimate across high schools, weighted as chosen in the sidebar. The dashed lines mark the tenth, fiftieth and ninetieth percentiles.">?</span></h2>
+  <p class="sub" id="s2"></p>
+  <figure><svg id="fig2" viewBox="0 0 900 300" role="img" aria-label="Distribution of the per-school estimate"></svg></figure>
+
+  <h2>Grades against the anchor<span class="q" data-help="One dot per high school. Horizontal: the change in the achievement anchor. Vertical: the change in the pool grade average. The line is the rate at which grades and the anchor move together, estimated from the levels, not from these changes.">?</span></h2>
+  <p class="sub" id="s3"></p>
+  <figure><svg id="fig3" viewBox="0 0 900 400" role="img" aria-label="Change in grades against change in the anchor"></svg></figure>
+
+  <h2>The schools</h2>
+  <p class="sub">Click a heading to sort; click a row to highlight the school in the figure above.</p>
+  <div class="scroll"><table class="dense" id="tbl"><thead></thead><tbody></tbody></table></div>
+
+  <div class="foot" id="foot"></div>
+</main>
+</div>
+</div>

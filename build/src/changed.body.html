@@ -1,0 +1,74 @@
+<div class="wrap">
+<p class="famq">Criterion divergence &middot; did measured achievement move with the grades?</p>
+<h1>What changed</h1>
+<p class="dek">School by school, in one pass: how far a high school&rsquo;s grade average moved between two windows of graduating classes, how far its measured achievement moved over the same span, and how much of the grade movement the achievement movement accounts for. Every dot is one California high school, and the same schools appear in all three panels.</p>
+<p class="dek">Read the panels in order. The first says how much grades moved. The second sets that movement beside an independent measure of the same students. The third keeps only what the second cannot explain.</p>
+
+<div class="layout">
+<aside class="side" id="side">
+  <h4>Which pool<span class="q" data-help="The University publishes grade averages for each campus separately and for the University as a whole. The Universitywide figure is the University&rsquo;s own aggregate, in which a student who applies to several campuses is counted once; a single campus is a self-selected slice of a school&rsquo;s class, and the deeper the campus reaches into that class, the lower its slice starts.">?</span></h4>
+  <select id="pool"></select>
+
+  <h4>Which students<span class="q" data-help="The University publishes, for each California high school, the mean recalculated grade point average of that school&rsquo;s applicants, admitted students and enrolled students &mdash; the University&rsquo;s own weighted, capped calculation over tenth- and eleventh-grade A&ndash;G coursework, not the school&rsquo;s transcript average. Admitted and enrolled averages are also shaped by what the University chose that year, so applicants is the population least disturbed by admission decisions.">?</span></h4>
+  <div class="chips" id="serchips"></div>
+
+  <h4>Achievement anchor<span class="q" data-help="An independent, school-level measure of the same students, used to ask how much of the grade movement moved with measured achievement. The state assessments test nearly every eleventh grader; the SAT, ACT and Advanced Placement measures cover only students who chose to sit them, and at the school level the two families agree at about 0.79, so neither stands in for the other. One instrument is used per graduating class, and a window that straddles a change of instrument is flagged.">?</span></h4>
+  <select id="anchor"></select>
+  <div class="note" id="anote"></div>
+
+  <h4>Compare two windows</h4>
+  <label>Earlier classes</label>
+  <div class="rowline"><select id="p0a"></select><select id="p0b"></select></div>
+  <label>Later classes</label>
+  <div class="rowline"><select id="p1a"></select><select id="p1b"></select></div>
+  <div class="note">Years are graduating classes: the class of 2019 applied in autumn 2018.</div>
+
+  <details id="refine">
+    <summary>Refine</summary>
+    <label>Fewest applicants a school must send, in each window<span class="q" data-help="The University masks small cells: a school-campus-year with too few applicants, admits or enrollees reports no grade average, and those cells are absent, not zero. Raising this threshold trades coverage for stability, and the school count in the caption moves with it.">?</span></label>
+    <div class="rowline"><input type="range" id="gate" min="5" max="200" step="5" value="30"><span id="gatev">30</span></div>
+    <label>Weighting</label>
+    <select id="wt">
+      <option value="a">by number of applicants</option>
+      <option value="s">each school counts once</option>
+    </select>
+    <div class="note">Weighting sets what the summary numbers and the fitted line mean: the average school, or the average applicant.</div>
+  </details>
+
+  <p style="margin-top:12px"><button class="act" id="reset">Reset every control</button></p>
+</aside>
+
+<main>
+  <div class="readout" id="ro"></div>
+  <div id="flags"></div>
+  <div id="pick"></div>
+
+  <h2>A &middot; How far grades moved<span class="q" data-help="One dot per high school. Horizontal position is the change in that school&rsquo;s pool grade average between the two windows, measured inside the school, so a school that entered or left the data never creates a jump. Dots are stacked where they would overlap; the vertical position carries no meaning beyond that.">?</span></h2>
+  <p class="sub" id="s1"></p>
+  <figure><svg id="fig1" viewBox="0 0 900 300" role="img" aria-label="Distribution of within-school change in pool grade average"></svg></figure>
+  <div class="chips"><button class="chip" id="sz" aria-pressed="false">size by applicants</button></div>
+
+  <h2>B &middot; Against the achievement anchor<span class="q" data-help="The same schools. Horizontal: the change in the school&rsquo;s achievement anchor between the same two windows. Vertical: the change in its pool grade average. The empirical relationship is the weighted least-squares line through these points, and its height where the anchor did not move is the grade movement left over. Equal standardized movement is a different claim: a line through the origin whose slope is the ratio of the two spreads, so a school that moved one standard deviation on the anchor is drawn as having moved one standard deviation on grades.">?</span></h2>
+  <p class="sub" id="s2"></p>
+  <figure><svg id="fig2" viewBox="0 0 900 420" role="img" aria-label="Change in pool grade average against change in the achievement anchor"></svg></figure>
+  <div class="chips" style="margin-top:2px">
+    <button class="chip" id="ref_fit" aria-pressed="true">empirical relationship</button>
+    <button class="chip" id="ref_eq" aria-pressed="false">equal standardized movement</button>
+  </div>
+
+  <h2>C &middot; What the anchor does not account for<span class="q" data-help="The vertical distance from each school&rsquo;s dot in panel B to the reference line chosen there. Red is above the line, blue below. Which reference is chosen changes what the distance means: against the empirical relationship the line is fitted to these very schools, so the weighted average distance is zero by construction and only the spread is informative; against equal standardized movement the average distance is itself the quantity, because that line is a claim made in advance rather than one read off the data.">?</span></h2>
+  <p class="sub" id="s3"></p>
+  <figure><svg id="fig3" viewBox="0 0 900 300" role="img" aria-label="Distribution of the residual from panel B"></svg></figure>
+  <div class="legend">
+    <span><span class="swatch" style="background:#FB0207"></span>above the reference</span>
+    <span><span class="swatch" style="background:#0000FF"></span>below the reference</span>
+  </div>
+
+  <h2>School by school</h2>
+  <p class="sub">Click a row, or any dot above, to hold that school in all three panels. Click a column heading to sort.</p>
+  <div class="scroll"><table class="dense" id="tbl"><thead></thead><tbody></tbody></table></div>
+
+  <div class="foot" id="foot"></div>
+</main>
+</div>
+</div>

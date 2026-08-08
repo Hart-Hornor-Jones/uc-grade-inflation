@@ -1,0 +1,70 @@
+<div class="wrap">
+<p class="famq">Compression &middot; how much does a grade point still distinguish near the top of the scale?</p>
+<h1>Same school, different doors</h1>
+<p class="dek">Every California high school sends applicants to all nine undergraduate campuses. The students who apply to Merced are, on the whole, further down their own class than the students who apply to Berkeley. Comparing those slices <em>inside one school in one year</em> holds the school constant: whatever its teaching, its neighborhood and its actual achievement, they are the same for both slices. Whatever separates the slices is the reach of the pool, not the school.</p>
+<p class="dek">The slices also start at different distances from the top of the scale, and the scale has a hard cap: the closer a pool already sits to it, the less room any rise has, and the less one grade point can still distinguish. This figure measures how far each slice moved against the room it had left. Compression of that kind is a loss of resolution whatever produced it &mdash; easier grading, heavier course weighting, or real improvement running out of headroom.</p>
+
+<div class="layout">
+<aside class="side" id="side">
+  <h4>Compare two periods</h4>
+  <label>Earlier classes</label>
+  <div class="rowline"><select id="p0a"></select><select id="p0b"></select></div>
+  <label>Later classes</label>
+  <div class="rowline"><select id="p1a"></select><select id="p1b"></select></div>
+  <div class="note">Years are graduating classes: the class of 2019 applied in autumn 2018.</div>
+
+  <h4>Which grade<span class="q" data-help="The University publishes, for each California high school and each campus, the mean recalculated grade point average of that school&rsquo;s applicants, admitted students and enrolled students &mdash; the University&rsquo;s own weighted, capped calculation over tenth- and eleventh-grade A&ndash;G coursework, not the school&rsquo;s transcript average. Classes 1994 to 2025.">?</span></h4>
+  <select id="ser">
+    <option value="app">Grade point average of applicants</option>
+    <option value="adm">Grade point average of admitted students</option>
+    <option value="enr">Grade point average of enrolled students</option>
+  </select>
+
+  <h4>Which schools</h4>
+  <label>County</label><select id="county"></select>
+  <label>Share of high-need pupils</label>
+  <select id="upp"><option value="">every school</option><option value="0">lower third</option><option value="1">middle third</option><option value="2">upper third</option></select>
+  <label>School achievement</label>
+  <select id="ach"><option value="">every school</option><option value="0">lower third</option><option value="1">middle third</option><option value="2">upper third</option></select>
+  <label>Fewest applicants a school must send, each period<span class="q" data-help="The University masks small cells: a school-campus-year with too few applicants, admits or enrollees reports no grade average, and those cells are absent, not zero. Raising this threshold trades coverage for stability.">?</span></label>
+  <input type="number" id="gate" value="30" min="1" max="400" step="5">
+
+  <h4>Weighting</h4>
+  <select id="wt"><option value="a">by number of applicants</option><option value="s">each school counts once</option></select>
+
+  <h4>Paired comparison</h4>
+  <label>Deeper pool</label><select id="cA"></select>
+  <label>Shallower pool</label><select id="cB"></select>
+  <div class="note">The paired figure below uses only schools that clear the applicant threshold at <em>both</em> campuses, so the two changes are measured on identical schools.</div>
+  <p style="margin-top:12px"><button class="act" id="reset">Reset every control</button></p>
+</aside>
+
+<main>
+  <div class="readout" id="ro"></div>
+
+  <h2>What each campus&rsquo;s slice of the class did<span class="q" data-help="Each bar runs from the campus&rsquo;s pool grade point average in the earlier period to the later period. Campuses are ordered by where their applicant pool sat at the start: the pool at the bottom reaches furthest down the class. The slices are self-selected and their composition can change &mdash; a pool that deepens will see its mean fall for that reason alone, which works against a rise, not for it; the readout reports how each pool&rsquo;s depth changed.">?</span></h2>
+  <p class="sub" id="s1"></p>
+  <figure><svg id="fig1" viewBox="0 0 900 400" role="img" aria-label="Change in pool grade point average by campus"></svg></figure>
+  <div class="legend"><span><span class="swatch" style="background:#fff;border:2px solid #000"></span>earlier period</span><span><span class="swatch" style="background:#000"></span>later period, in the campus color</span></div>
+
+  <h2>The rise runs against the level<span class="q" data-help="Horizontal: where the campus&rsquo;s applicant pool sat in the earlier period. Vertical: how much it rose. A downward slope means the pools that started nearest the cap moved least &mdash; the measured gain shrinks as the room above shrinks, whatever caused the rise.">?</span></h2>
+  <p class="sub" id="s2"></p>
+  <figure><svg id="fig2" viewBox="0 0 900 320" role="img" aria-label="Change against starting level, by campus"></svg></figure>
+
+  <h2>The same schools, two doors, school by school<span class="q" data-help="One dot per high school. Horizontal: how much its deeper-pool grade average rose. Vertical: how much its shallower-pool grade average rose over the same years. Points below the diagonal are schools where the deeper slice rose more.">?</span></h2>
+  <p class="sub" id="s3"></p>
+  <figure><svg id="fig3" viewBox="0 0 900 380" role="img" aria-label="Paired school-level comparison of two campuses"></svg></figure>
+
+  <h2>When it happened<span class="q" data-help="A chain-linked within-school index. For each pair of consecutive classes it averages the change at schools present in both, then adds those changes up. Schools entering or leaving the data never create a jump.">?</span></h2>
+  <p class="sub" id="s4"></p>
+  <figure><svg id="fig4" viewBox="0 0 900 400" role="img" aria-label="Chain-linked within-school pool grade average by class year"></svg></figure>
+  <div class="legend" id="leg4"></div>
+
+  <h2>School by school</h2>
+  <p class="sub">Click a row to see that school in the paired figure above. Click a column heading to sort.</p>
+  <div class="scroll"><table class="dense" id="tbl"><thead></thead><tbody></tbody></table></div>
+
+  <div class="foot" id="foot"></div>
+</main>
+</div>
+</div>

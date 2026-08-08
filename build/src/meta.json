@@ -1,0 +1,54 @@
+{
+ "y0": 1994,
+ "y1": 2025,
+ "ry0": 1994,
+ "ry1": 2025,
+ "campus": [
+  "Berkeley",
+  "Davis",
+  "Irvine",
+  "Los Angeles",
+  "Merced",
+  "Riverside",
+  "San Diego",
+  "Santa Barbara",
+  "Santa Cruz"
+ ],
+ "srcname": {
+  "1": "CAHSEE grade 10 ELA (% passed)",
+  "2": "STAR CST grade 11 ELA (% proficient or above)",
+  "3": "CAASPP grade 11 (mean of ELA and math % met or exceeded)"
+ },
+ "nschools": 1607,
+ "built": "2026-08-01",
+ "fun_fields": [
+  "A",
+  "D",
+  "E",
+  "app_gpa",
+  "adm_gpa",
+  "enr_gpa"
+ ],
+ "scale": {
+  "gpa": 100,
+  "census_pct": 40,
+  "z": 250,
+  "zoff": 2048,
+  "act": 40,
+  "ap_pass_share": 40,
+  "ap_ge3_per_g12": 400,
+  "upp": 40
+ },
+ "rul_fields": [
+  "census_pct",
+  "census_src",
+  "census_z",
+  "z_sat",
+  "act_pct_ge21",
+  "ap_pass_share",
+  "ap_ge3_per_g12",
+  "g12",
+  "ag_completers",
+  "upp"
+ ]
+}

@@ -1,0 +1,106 @@
+<div class="wrap">
+<p class="famq">Selection divergence &middot; does the scale still express the distinctions the admission process makes?</p>
+<h1>The crowded top</h1>
+<p class="dek">A grading scale is useful to the extent that it separates students. One way to measure how much separating power the high-school grade point average still carries, without first settling whether grades have risen, is to ask a narrower question: inside a single high school, how far above the students it turned away does the University&rsquo;s admitted group sit?</p>
+<p class="dek">That distance &mdash; admitted minus denied &mdash; is the separation the record actually contains, derived school by school from the published applicant and admitted averages and their counts. The older figure, admitted minus applicants, answers a different question, because the applicants already include the admitted: the two are linked by the admission rate, and both are drawn here.</p>
+
+<div class="layout">
+<aside class="side" id="side">
+  <h4>What to plot</h4>
+  <select id="view">
+    <option value="sep">Separation between admitted and denied students</option>
+    <option value="corr">How well a school&rsquo;s grades predict its admission rate</option>
+    <option value="spread">How much grades still vary between schools</option>
+  </select>
+  <div class="note" id="viewnote"></div>
+
+  <h4>Separation measure</h4>
+  <select id="sep">
+    <option value="sep">admitted minus denied</option>
+    <option value="gap">admitted minus applicants</option>
+  </select>
+  <div class="note">Applies to the first figure, the summary and the table. The two are linked exactly, school by school; the &#9432; beside the figure gives the identity.</div>
+
+  <h4>Pools</h4>
+  <div class="chips" id="campchips"></div>
+  <p style="margin:7px 0 0"><button class="act" id="allc">all</button> <button class="act" id="nonec">none</button></p>
+
+  <h4>Which schools</h4>
+  <label>County</label><select id="county"></select>
+  <label>Share of high-need pupils</label>
+  <select id="upp"><option value="">every school</option><option value="0">lower third</option><option value="1">middle third</option><option value="2">upper third</option></select>
+  <label>Fewest applicants a school must send, each class<span class="q" data-help="The admitted grade average is masked more often than the applicant average, because admitted counts are smaller. A school missing either figure in a class drops out of that class only; this threshold sets how aggressively.">?</span></label>
+  <input type="number" id="gate" value="20" min="1" max="400" step="5">
+
+  <h4>How to average</h4>
+  <select id="agg">
+    <option value="within">within each school, then average schools</option>
+    <option value="pooled">pool every applicant in the state together</option>
+  </select>
+  <div class="note">Pooling lets the mix of schools move the answer; averaging within schools does not.</div>
+
+  <h4>Crowding at the top</h4>
+  <label>Grade point average threshold: <b id="thrv">3.90</b></label>
+  <input type="range" id="thr" min="3.40" max="4.20" step="0.01" value="3.90">
+  <div class="note">Sets the bar in the crowding figure, and marks the same bar on the two survival curves below it.</div>
+
+  <h4>Two windows</h4>
+  <label>Earlier classes</label>
+  <p class="rowline" style="margin:2px 0 0"><input type="number" id="e0a" value="2016" min="1994" max="2025" step="1"> to <input type="number" id="e0b" value="2019" min="1994" max="2025" step="1"></p>
+  <label>Later classes</label>
+  <p class="rowline" style="margin:2px 0 0"><input type="number" id="e1a" value="2023" min="1994" max="2025" step="1"> to <input type="number" id="e1b" value="2025" min="1994" max="2025" step="1"></p>
+  <label>Pool for the survival curves</label>
+  <select id="survcamp"></select>
+
+  <h4>Refine</h4>
+  <label>Fewest denied students a cell must have<span class="q" data-help="The denied average is derived by subtracting the admitted total from the applicant total, so a small denied group inherits a large share of the rounding in the two published averages: the worst case is 0.005 x (1 + (A+D)/R). Below this threshold the cell is withheld.">?</span></label>
+  <input type="number" id="minr" value="10" min="3" max="100" step="1">
+  <label>Selectivity axis</label>
+  <select id="xscale">
+    <option value="rate">admission rate, percent</option>
+    <option value="logit">admission rate, log-odds</option>
+  </select>
+  <label>Points in the last figure</label>
+  <select id="grain">
+    <option value="campus">one per pool and period</option>
+    <option value="school">one per school, pool and period</option>
+  </select>
+  <label>Classes per period</label>
+  <select id="plen"><option value="2">2</option><option value="4" selected>4</option><option value="8">8</option></select>
+  <label>Fewest applicants a school must send across a period (last figure, school grain)</label>
+  <input type="number" id="sgate" value="100" min="10" max="1000" step="10">
+  <p style="margin-top:12px"><button class="act" id="reset">Reset every control</button></p>
+</aside>
+
+<main>
+  <div class="readout" id="ro"></div>
+  <div id="flags"></div>
+
+  <h2 id="h1">The separation between admitted and denied students<span class="q" id="qsep" data-help="">?</span></h2>
+  <p class="sub" id="s1"></p>
+  <figure><svg id="fig1" viewBox="0 0 900 420" role="img" aria-label="Separation by graduating class"></svg></figure>
+  <div class="legend" id="leg1"></div>
+  <p class="sub" id="arc"></p>
+
+  <h2>How crowded the top of the scale is<span class="q" data-help="The share of all applicants who come from a high school whose pool grade point average sits at or above the threshold. Move the slider in the sidebar to change the bar. The shaded bands in both time figures mark admission regimes: test scores were required through the class of 2020, optional for 2021, and not considered from 2022 &mdash; the change is not the only thing that happened in those years, and nothing on this page identifies its effect.">?</span></h2>
+  <p class="sub" id="s2"></p>
+  <figure><svg id="fig2" viewBox="0 0 900 320" role="img" aria-label="Share of applicants from schools above a grade threshold"></svg></figure>
+
+  <h2>Where on the scale the crowding happened<span class="q" data-help="For one pool and one window of classes, the share of applicant mass at or above every grade point average, read across the whole scale rather than at a single bar. Each school contributes all of its applicants at its own pool average, so the curve is a survival function over schools weighted by size, not over individual students: between-school crowding is what it shows, and crowding inside a school is not observable here. Two windows drawn together show which part of the scale filled in.">?</span></h2>
+  <p class="sub" id="s3"></p>
+  <figure><svg id="fig3" viewBox="0 0 900 380" role="img" aria-label="Survival curves for two windows of classes"></svg></figure>
+  <div class="legend" id="leg3"></div>
+
+  <h2>Separation against selectivity<span class="q" data-help="Each point is one pool over one block of graduating classes. The horizontal axis is that pool's admission rate over the block; the vertical axis is the separation between its admitted and denied students, averaged within schools. A pool that grew more selective moves left. Whether it also moves up is the question — but the separation is the admitted-minus-applicants distance divided by the share not admitted, so part of any tilt is arithmetic; the gray curve shows exactly how much.">?</span></h2>
+  <p class="sub" id="s4"></p>
+  <figure><svg id="fig4" viewBox="0 0 900 420" role="img" aria-label="Separation against admission rate, by pool and period"></svg></figure>
+  <div class="legend" id="leg4"></div>
+
+  <h2>Class by class</h2>
+  <p class="sub">Every number the first figure draws, for the pools selected. Click a heading to sort.</p>
+  <div class="scroll"><table class="dense" id="tbl"><thead></thead><tbody></tbody></table></div>
+
+  <div class="foot" id="foot"></div>
+</main>
+</div>
+</div>

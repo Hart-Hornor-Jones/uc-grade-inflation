@@ -1,0 +1,67 @@
+<div class="wrap">
+<p class="famq">Prediction &middot; did the thirds of the entering class stop predicting who graduates?</p>
+<h1>The shrinking top third</h1>
+<p class="dek">The University sorts each entering freshman class into thirds by the grade point average it recalculates from the transcript, and publishes where the two boundaries fall. Because the thirds are cut fresh every year, the boundaries move: they are a direct reading of how the arriving class is distributed, taken by the University itself, with no model in between.</p>
+<p class="dek">Two things happened at once, and the point of this section is that they happened together. The boundaries climbed toward the top of the scale, so the top third now occupies a sliver of grade point where it once occupied a fifth of a point. Meanwhile the students inside those thirds went on graduating at rates that stayed about as far apart as they ever were. The same amount of information about who finishes on time is now being carried by a much narrower strip of the ruler.</p>
+
+<div class="layout">
+<aside class="side" id="side">
+  <h4>The boundaries<span class="q" data-help="The University divides each entering class into three equal groups by recalculated grade point average, so each band holds about a third of that year&rsquo;s freshmen. The cut points are properties of the class, not fixed standards, and the same cut points are applied at every campus. This section verified that: in all twelve cohort years the three published ranges are identical across the nine campuses.">?</span></h4>
+  <label>Entering class <span id="yrlab"></span></label>
+  <input type="range" id="yr" min="2010" max="2021" step="1" value="2021">
+  <div class="rowline" style="margin-top:8px">
+    <button class="act" id="play">Run 2010 to 2021</button>
+  </div>
+  <div class="chips" style="margin-top:8px">
+    <button class="chip" id="ghost" aria-pressed="true">Keep 2010 in view</button>
+  </div>
+
+  <h4>Graduation</h4>
+  <label>Campus</label>
+  <select id="camp"></select>
+  <label>Years to a degree<span class="q" data-help="Cumulative: the five-year rate counts everyone who had finished by five years, including those who finished in four. A cohort is only shown at a horizon it has actually reached &mdash; six years is not yet observed for classes entering after 2019, and five years not after 2020, so those lines stop rather than falling to zero.">?</span></label>
+  <div class="chips" id="hz">
+    <button class="chip" data-h="4" aria-pressed="true">4 years</button>
+    <button class="chip" data-h="5" aria-pressed="false">5 years</button>
+    <button class="chip" data-h="6" aria-pressed="false">6 years</button>
+  </div>
+
+  <details id="refine">
+    <summary style="cursor:pointer;margin-top:16px;font-size:12px;text-transform:uppercase;letter-spacing:.02em">Compare two groups</summary>
+    <label>Split students by</label>
+    <select id="cmpsplit"><option value="">do not split &mdash; everyone</option></select>
+    <label>First group</label><select id="gA"></select>
+    <label>Second group</label><select id="gB"></select>
+    <div class="note">The first group is drawn solid, the second dashed, in the same three band colors. Group figures come from the University&rsquo;s own published splits, so a group whose count falls below its reporting floor simply has no point that year.</div>
+  </details>
+
+  <p style="margin-top:14px"><button class="act" id="reset">Reset every control</button></p>
+  <div class="note" id="lbnote"></div>
+</aside>
+
+<main>
+  <div class="readout" id="ro"></div>
+
+  <h2>Where the boundaries fell<span class="q" data-help="The horizontal line is grade point average. The three colored spans are the three thirds of the entering class in the chosen year. The bottom third runs off the left of the drawn range in every year; its true lower end is printed at the arrow. Move the slider, or press the run button, to watch the two cut points climb.">?</span></h2>
+  <p class="sub" id="s1"></p>
+  <figure><svg id="fig1" viewBox="0 0 900 250" role="img" aria-label="The three grade point average bands of one entering class"></svg></figure>
+  <figure class="figinset">
+    <div class="figtitle">How wide the top third stayed</div>
+    <div class="figsub">4.00 minus the upper cut point, in grade points</div>
+    <svg id="fig1b" viewBox="0 0 430 210" role="img" aria-label="Width of the top band by entering class"></svg>
+  </figure>
+  <div class="legend" id="leg1"></div>
+
+  <h2>What the thirds still predict<span class="q" data-help="Each line is one third of the entering class, followed forward to graduation. Read the vertical distance between the top and bottom lines: that is how much finishing depends on where a student entered the class. The classes entering in 2020 and 2021 met the pandemic during their time at the University, and their rates are not comparable with the classes before them for reasons that have nothing to do with grades. Cohort counts are in the hover text.">?</span></h2>
+  <p class="sub" id="s2"></p>
+  <figure><svg id="fig2" viewBox="0 0 900 430" role="img" aria-label="Graduation rate by entering-class band and cohort year"></svg></figure>
+  <div class="legend" id="leg2"></div>
+
+  <h2>The table behind both figures</h2>
+  <p class="sub" id="s3"></p>
+  <div class="scroll"><table class="dense" id="tbl"><thead></thead><tbody></tbody></table></div>
+
+  <div class="foot" id="foot"></div>
+</main>
+</div>
+</div>

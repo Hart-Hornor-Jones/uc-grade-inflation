@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Did high-school grades inflate, and does anyone still learn anything from them?</title>
+<meta name="description" content="Interactive figures asking what a rising high-school grade point average still communicates: compression, criterion divergence, selection divergence, calibration, and prediction, built from the University of California's published grade averages for every California high school, classes 1994 to 2025, and every school-level testing program the state has run.">
+<style>
+{{CSS}}
+</style>
+</head><body>
+
+<header class="sitehead">
+<div class="masthead">Reading high-school grades &middot; California, classes 1994&ndash;2025</div>
+<h1>Did high-school grades inflate, and does anyone still learn anything from them?</h1>
+<p class="dek">Nobody disputes that the grade point averages arriving at the University of California have risen.
+The open question is what the scale still communicates, and it splits into five questions that reasonable people
+weigh differently: whether grades have crowded against the top of the scale until one grade point distinguishes
+very little (<b>compression</b>); whether grades moved away from independent measures of the same students
+(<b>criterion divergence</b>); whether admission decisions now express distinctions the scale no longer states
+(<b>selection divergence</b>); whether a grade means the same thing at different schools and in different years
+(<b>calibration</b>); and whether the grade a student enters with still predicts what happens afterward
+(<b>prediction</b>). Each tab takes up one of these as a question, not a verdict, and hands the judgments that
+drive the answer &mdash; which years to compare, which students to count, what to accept as independent evidence
+of achievement &mdash; to the reader as controls.</p>
+<p class="dek">Everything is built from the University&rsquo;s published grade point averages for every California
+high school, graduating classes 1994 to 2025, set beside every school-level testing program the state has run
+since 1999, and from the University&rsquo;s own record of who graduates. The rise these figures examine runs back
+decades &mdash; it neither starts nor breaks at any single policy year &mdash; and the long axes are drawn in
+full so that can be seen.</p>
+</header>
+
+<nav class="tabs" id="tabs">
+<a class="tabbtn" data-tab="changed" href="#changed"><span class="tn">1</span>What changed</a>
+<a class="tabbtn" data-tab="doors" href="#doors"><span class="tn">2</span>Same school, different doors</a>
+<a class="tabbtn" data-tab="crowded" href="#crowded"><span class="tn">3</span>The crowded top</a>
+<a class="tabbtn" data-tab="bands" href="#bands"><span class="tn">4</span>The shrinking top third</a>
+<a class="tabbtn" data-tab="bench" href="#bench"><span class="tn">5</span>The yardstick bench</a>
+<a class="tabbtn" data-tab="school" href="#school"><span class="tn">6</span>One school at a time</a>
+<a class="methlink" href="methods.html">Methods and sources</a>
+</nav>
+
+<section id="tab-changed">
+{{BODY_changed}}
+</section>
+
+<section id="tab-doors">
+{{BODY_doors}}
+</section>
+
+<section id="tab-crowded">
+{{BODY_margin}}
+</section>
+
+<section id="tab-bands">
+{{BODY_bands}}
+</section>
+
+<section id="tab-bench">
+{{BODY_bench}}
+</section>
+
+<section id="tab-school">
+{{BODY_card}}
+</section>
+
+<script src="data_inflation.js"></script>
+<script src="data_bands.js"></script>
+<script>
+{{CORE}}
+</script>
+<script>
+{{APP_doors}}
+</script>
+<script>
+{{APP_margin}}
+</script>
+<script>
+{{APP_bench}}
+</script>
+<script>
+{{APP_card}}
+</script>
+<script>
+{{APP_bands}}
+</script>
+<script>
+{{APP_changed}}
+</script>
+<script>
+/* hash-routed tabs */
+(function () {
+  'use strict';
+  const TABS = ['changed', 'doors', 'crowded', 'bands', 'bench', 'school'];
+  function show() {
+    let h = (location.hash || '').replace('#', '');
+    if (!TABS.includes(h)) h = 'changed';
+    for (const t of TABS) {
+      const sec = document.getElementById('tab-' + t);
+      if (sec) sec.hidden = (t !== h);
+      const b = document.querySelector('.tabbtn[data-tab="' + t + '"]');
+      if (b) b.setAttribute('aria-pressed', String(t === h));
+    }
+    window.scrollTo(0, 0);
+  }
+  window.addEventListener('hashchange', show);
+  show();
+  window.__tabs = { show, TABS };
+})();
+</script>
+</body></html>

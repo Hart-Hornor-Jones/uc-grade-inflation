@@ -1,0 +1,20 @@
+# Node test harness (headless QA only, never part of the site)
+build/node_modules/
+build/shots/
+build/*.log
+
+# Editor / OS / tool cruft
+.DS_Store
+Thumbs.db
+*.swp
+~$*
+.~lock.*#
+.Rhistory
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# Local working notes — not part of the public repo
+PUSH_TO_GITHUB.*
+Margin Tab Rework*.md
+grade-inflation-site-source.zip

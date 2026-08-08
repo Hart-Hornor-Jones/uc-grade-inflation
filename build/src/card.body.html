@@ -1,0 +1,60 @@
+<div class="wrap">
+<p class="famq">Calibration &middot; does the same grade mean the same thing at every school?</p>
+<h1>One school at a time</h1>
+<p class="dek">Statewide averages hide the thing people actually want to know, which is what happened at a school they recognize. This puts one high school&rsquo;s grade record beside every independent measure of its students that exists, on a single axis of graduating classes.</p>
+<p class="dek">Nothing is adjusted, ranked or scored. The measures simply sit next to each other, and where they part company is visible.</p>
+
+<div class="layout">
+<aside class="side" id="side">
+  <h4>The school</h4>
+  <input type="text" id="search" placeholder="type part of a name or city">
+  <select id="school" size="1"></select>
+  <div class="note" id="schnote"></div>
+
+  <h4>Compare with</h4>
+  <input type="text" id="search2" placeholder="optional second school">
+  <select id="school2"></select>
+
+  <h4>Grade series<span class="q" data-help="The University&rsquo;s published mean recalculated grade point average of this school&rsquo;s applicants, admitted students or enrolled students at each campus, for each graduating class from 1994 to 2025. A gap in a line is a class where the school sent too few applicants for the University to publish a figure &mdash; a gap is not a zero.">?</span></h4>
+  <div class="chips" id="serchips"></div>
+  <label style="margin-top:8px">Campuses shown</label>
+  <select id="campmode">
+    <option value="all">every campus separately</option>
+    <option value="comb">all campuses combined</option>
+    <option value="one">one campus</option>
+  </select>
+  <select id="campone" style="display:none"></select>
+  <label>Fewest applicants a class must send</label>
+  <input type="number" id="gate" value="5" min="1" max="200" step="1">
+
+  <h4>Achievement measures</h4>
+  <div class="chips" id="achchips"></div>
+  <div class="note">Shown as the school&rsquo;s position among all California high schools in that graduating class, so instruments with different scales can share one axis. Zero is the state average of schools. The state assessments test nearly everyone; the SAT, ACT and Advanced Placement measures cover only students who chose to sit them &mdash; where the two families part company at one school, that is usually a real and stable feature of the school, not error. At schools with few testers or few applicants, positions move a lot from year to year for reasons that have nothing to do with teaching.</div>
+  <p style="margin-top:12px"><button class="act" id="reset">Reset every control</button></p>
+</aside>
+
+<main>
+  <div class="readout" id="ro"></div>
+  <div id="flags"></div>
+
+  <h2 id="h1">Grades submitted to the University</h2>
+  <p class="sub" id="s1"></p>
+  <figure><svg id="fig1" viewBox="0 0 900 400" role="img" aria-label="Grade point average by graduating class"></svg></figure>
+  <div class="legend" id="leg1"></div>
+
+  <h2>Everything else measured about this school<span class="q" data-help="Each measure is standardized within its own graduating class across all California high schools, so the vertical position means the same thing for every instrument even though the instruments changed. Four separate testing programs, none spanning the whole period, each placed on the class that sat it; a line that holds level means the school held its position among California schools, not that scores were unchanged.">?</span></h2>
+  <p class="sub" id="s2"></p>
+  <figure><svg id="fig2" viewBox="0 0 900 380" role="img" aria-label="Achievement measures by graduating class"></svg></figure>
+  <div class="legend" id="leg2"></div>
+
+  <h2>Where this school sits among all of them<span class="q" data-help="The statewide cloud for the two periods named in the caption. The highlighted point is the selected school.">?</span></h2>
+  <p class="sub" id="s3"></p>
+  <figure><svg id="fig3" viewBox="0 0 900 360" role="img" aria-label="This school placed in the statewide distribution"></svg></figure>
+
+  <h2>Class by class</h2>
+  <div class="scroll"><table class="dense" id="tbl"><thead></thead><tbody></tbody></table></div>
+
+  <div class="foot" id="foot"></div>
+</main>
+</div>
+</div>
