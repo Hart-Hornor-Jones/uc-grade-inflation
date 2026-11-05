@@ -154,7 +154,7 @@ beside the counts. Two files, two column sets, one answer. It also cross-foots t
 denominators three ways (campus "All" against the nine campuses summed; the Pell
 split against the other two; and, in the 40 cells where UC publishes one, against
 the dashboard's own Overall sheet), pins 2010 top-tier four-year = 74.1%, the 2021
-upper cut = 3.92, and the six-year top-minus-bottom gap inside 13.5-14.5 points in
+upper cut = 3.92, and the six-year top-minus-bottom gap inside 13.4-14.5 points (13.5 before UCOP's September 2026 data revision) in
 every mature cohort, and writes `out\bands_expected.json`, which `test_tools.js`
 then compares against what the browser actually computes.
 

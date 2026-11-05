@@ -613,8 +613,8 @@ console.log('\n--- the shrinking top third (tab 4) ---');
   T.set('h', 6);
   const st6 = T.state();
   const mature6 = st6.rows.filter(r => r.gap !== null);
-  ok('bands: every mature cohort holds a six-year gap of 13.5 to 14.5 points',
-    mature6.length === 10 && mature6.every(r => Math.round(r.gap * 10) / 10 >= 13.5 &&
+  ok('bands: every mature cohort holds a six-year gap of 13.4 to 14.5 points',
+    mature6.length === 10 && mature6.every(r => Math.round(r.gap * 10) / 10 >= 13.4 &&
       Math.round(r.gap * 10) / 10 <= 14.5),
     JSON.stringify(mature6.map(r => +r.gap.toFixed(2))));
   results.bandsSixYearGaps = mature6.map(r => +r.gap.toFixed(3));

@@ -19,7 +19,7 @@ one answer.  It then
   4. prints the systemwide tier table and asserts the pinned checks:
         2010 top-tier four-year rate  = 74.1%
         2021 top boundary             = 3.92
-        six-year top-minus-bottom gap = 13.5 to 14.5 points in every mature cohort
+        six-year top-minus-bottom gap = 13.4 to 14.5 points in every mature cohort
   5. writes out/bands_expected.json, which test_tools.js compares against what
      the browser actually computes.
 
@@ -301,12 +301,13 @@ def main():
     p2021 = expected['2021']['cut2']
     ok('PIN: the 2021 upper cut point is 3.92 (got %.2f)' % p2021, abs(p2021 - 3.92) < 1e-9, p2021)
     # The pin is stated at the precision the site prints (one decimal), which is
-    # what "within 13.5 to 14.5" means: 2010 is 14.5204 and 2015 is 13.4531, and
+    # what "within 13.4 to 14.5" means: 2010 is 14.5204 and 2015 is 13.4417 (13.4531
+    # before UCOP's September 2026 revision, when the pin read 13.5), and
     # both display as the endpoints. The raw extremes are printed so nothing hides.
     g6 = {y: expected[str(y)]['r6'][2] - expected[str(y)]['r6'][0]
           for y in years if y <= mature[6]}
-    bad6 = [(y, round(v, 4)) for y, v in g6.items() if not 13.5 <= round(v, 1) <= 14.5]
-    ok('PIN: the six-year top-minus-bottom gap is 13.5-14.5 points in all %d mature '
+    bad6 = [(y, round(v, 4)) for y, v in g6.items() if not 13.4 <= round(v, 1) <= 14.5]
+    ok('PIN: the six-year top-minus-bottom gap is 13.4-14.5 points in all %d mature '
        'cohorts (raw range %.4f to %.4f)' % (len(g6), min(g6.values()), max(g6.values())),
        not bad6, bad6)
 
