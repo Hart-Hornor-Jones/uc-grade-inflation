@@ -66,7 +66,7 @@ CI = {c: i for i, c in enumerate(CAMPUS)}
 
 # ----------------------------------------------------------------- 1. funnel
 print('reading dv ...', flush=True)
-dv = pd.read_csv(DV, dtype={'ceeb': str})
+dv = pd.read_csv(DV, dtype={'ceeb': str}, encoding='utf-8')
 dv = dv[dv.campus.isin(CI)]
 Y0, Y1 = int(dv.year.min()), int(dv.year.max())
 NY = Y1 - Y0 + 1
@@ -79,14 +79,14 @@ SIDX = {c: i for i, c in enumerate(ceebs)}
 NS = len(ceebs)
 
 print('reading Universitywide pool ...', flush=True)
-uw = pd.read_csv(DVUW, dtype={'ceeb': str})
+uw = pd.read_csv(DVUW, dtype={'ceeb': str}, encoding='utf-8')
 uw = uw[uw.ceeb.isin(SIDX)]                 # nine-campus school universe only: NS is unmoved
 print(f'  {len(uw):,} rows, {uw.ceeb.nunique():,} CEEBs, classes '
       f'{int(uw.year.min())}-{int(uw.year.max())}')
 
 # ----------------------------------------------------------- 2. school-year covariates
 print('reading panel (CAASPP / A-G / UPP) ...', flush=True)
-pan = pd.read_csv(PAN, dtype={'ceeb': str, 'cds14': str},
+pan = pd.read_csv(PAN, dtype={'ceeb': str, 'cds14': str}, encoding='utf-8',
                   usecols=['ceeb','cds14','campus','year','avg_pct_met','ag_cohort',
                            'ag_met_uccsu_count','enroll_9_12','upp_pct'])
 # these covariates are identical across the 9 campus rows of a (ceeb,year) — collapse
@@ -104,7 +104,7 @@ ceeb_of_cds = (pan.dropna(subset=['cds14'])[['cds14','ceeb']]
 
 # ------------------------------------------------------ 3. census rulers (STAR / CAHSEE)
 print('reading star/cahsee panel ...', flush=True)
-sc = pd.read_csv(SC, dtype={'ceeb': str, 'cds14': str},
+sc = pd.read_csv(SC, dtype={'ceeb': str, 'cds14': str}, encoding='utf-8',
                  usecols=['cds14','test_year','ceeb','is_high_school',
                           'star_ela_g11_pct_prof_plus','star_ela_g11_tested',
                           'cahsee_ela_pct_passed','cahsee_ela_tested'])
@@ -127,7 +127,7 @@ print(f'  CAHSEE  : {len(cah):,} school-classes {cah.cls.min()}-{cah.cls.max()}'
 
 # ------------------------------------------------ 4. college-bound rulers (SAT / ACT / AP)
 print('reading test-context panel ...', flush=True)
-tc = pd.read_csv(TC, dtype={'ceeb': str, 'cds14': str},
+tc = pd.read_csv(TC, dtype={'ceeb': str, 'cds14': str}, encoding='utf-8',
                  usecols=['cds14','uc_cycle_year','ceeb','grade_12_enrollment',
                           'sat_takers','sat_pct_tested','z_sat_primary',
                           'act_pct_ge_21','act_takers','ap_exams_ge_3','ap_pass_share',

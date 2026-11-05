@@ -37,16 +37,16 @@ def wslope(x, y, w):
     return float(np.linalg.solve(X.T @ (X * W[:, None]), X.T @ (W * y))[1])
 
 print('reading sources ...', flush=True)
-dv = pd.read_csv(DV_NEW, dtype={'ceeb': str})
+dv = pd.read_csv(DV_NEW, dtype={'ceeb': str}, encoding='utf-8')
 # the Universitywide pool, restricted to the nine-campus school universe exactly as the
 # payload builder restricts it, so the browser and this file see the same schools
-uwdf = pd.read_csv(DV_UW, dtype={'ceeb': str})
+uwdf = pd.read_csv(DV_UW, dtype={'ceeb': str}, encoding='utf-8')
 uwdf = uwdf[uwdf.ceeb.isin(set(dv.ceeb.unique()))]
 dvu = pd.concat([dv, uwdf], ignore_index=True)
-pan = pd.read_csv(PAN, dtype={'ceeb': str}, usecols=['ceeb', 'year', 'avg_pct_met'])
+pan = pd.read_csv(PAN, dtype={'ceeb': str}, encoding='utf-8', usecols=['ceeb', 'year', 'avg_pct_met'])
 cov = pan.groupby(['ceeb', 'year']).avg_pct_met.max().rename('caaspp').reset_index()
 
-sc = pd.read_csv(SC, dtype={'ceeb': str}, usecols=[
+sc = pd.read_csv(SC, dtype={'ceeb': str}, encoding='utf-8', usecols=[
     'test_year', 'ceeb', 'is_high_school',
     'star_ela_g11_pct_prof_plus', 'star_ela_g11_tested',
     'cahsee_ela_pct_passed', 'cahsee_ela_tested'])
@@ -62,7 +62,7 @@ def wagg(df, val, wt):
 star = wagg(sc, 'star_ela_g11_pct_prof_plus', 'star_ela_g11_tested'); star['cls'] = star.test_year + 1
 cah = wagg(sc, 'cahsee_ela_pct_passed', 'cahsee_ela_tested');         cah['cls'] = cah.test_year + 2
 
-tc = pd.read_csv(TC, dtype={'ceeb': str}, usecols=[
+tc = pd.read_csv(TC, dtype={'ceeb': str}, encoding='utf-8', usecols=[
     'uc_cycle_year', 'ceeb', 'grade_12_enrollment', 'z_sat_primary'])
 tc = tc[tc.ceeb.notna()].copy()
 tc['g12w'] = tc.grade_12_enrollment.fillna(1.0).clip(lower=1e-9)
@@ -370,7 +370,7 @@ for c in ['Berkeley', 'Merced']:
 
 # ------------------------------------------------- the campus-label diagnosis
 print('label diagnosis ...', flush=True)
-old = pd.read_csv(DV_OLD, dtype={'ceeb': str})
+old = pd.read_csv(DV_OLD, dtype={'ceeb': str}, encoding='utf-8')
 diag = {}
 for c in ['Berkeley', 'Los Angeles', 'San Diego', 'Riverside', 'Merced']:
     m, beta = panel(old, c, PRE, POST, CEN)

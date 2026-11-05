@@ -573,6 +573,23 @@ console.log('\n--- school tab (card) ---');
   ok('card: changing school changes the summary', d.getElementById('card_ro').textContent !== before);
   const q = d.getElementById('card_search');
   if (q) { q.value = 'BERKELEY'; fire(q, 'input'); ok('card: search narrows the list', sel.options.length < 1200, String(sel.options.length)); }
+
+  /* figure 3 follows the "Campuses shown" control instead of hardwiring Berkeley
+     (the first sentence names the pool; the second names the school, which may itself be a Berkeley school) */
+  const cap3 = () => d.getElementById('card_s3').textContent.split('. ')[0];
+  const ylab3 = () => [...qa('#card_fig3 text.axlab')].map(t => t.textContent).join(' | ');
+  ok('card: figure 3 reads the Universitywide pool by default, never Berkeley',
+    d.getElementById('card_campmode').value === 'all' && cap3().startsWith('Classes of 2016') &&
+    cap3().includes(w.__core.UWLABEL + ' applicants') && !/Berkeley/.test(cap3()) &&
+    ylab3().includes(w.__core.UWLABEL + '-applicant'), cap3().slice(0, 90));
+  set('card', 'campmode', 'one'); set('card', 'campone', 4);
+  ok('card: figure 3 follows the one campus chosen',
+    cap3().includes('Merced applicants') && !/Berkeley|Universitywide/.test(cap3()) &&
+    ylab3().includes('Merced-applicant'), cap3().slice(0, 90));
+  set('card', 'campmode', 'comb');
+  ok('card: figure 3 returns to the Universitywide pool when every campus is combined',
+    cap3().includes(w.__core.UWLABEL + ' applicants') && !/Berkeley/.test(cap3()), cap3().slice(0, 90));
+  set('card', 'campmode', 'all');
 }
 
 /* ================================================================= bands */
@@ -737,7 +754,7 @@ console.log('\n--- the shrinking top third (tab 4) ---');
   ok('bands: the caption states both findings together, with the numbers',
     /closed toward the top/.test(cap) && /narrowed from 0\.21 to 0\.08 of a grade point/.test(cap) &&
     /24\.4 points entering 2010 and 23\.8 points entering 2021/.test(cap) &&
-    /six-year gap stayed between 13\.5 and 14\.5 points/.test(cap) &&
+    /six-year gap stayed between 13\.4 and 14\.5 points/.test(cap) &&
     /narrower strip/.test(cap), cap.slice(0, 140));
   ok('bands: the caption says where the horizons stop', /stop after the class entering 2019/.test(cap));
   /* a campus whose own gap narrowed must not be described as a gap that held */

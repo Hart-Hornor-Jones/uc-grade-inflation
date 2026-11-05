@@ -201,10 +201,15 @@ function fig2() {
 
 /* ---- figure 3: this school in the statewide cloud ----------------------- */
 const PRE = [2016, 2017, 2018, 2019], POST = [2023, 2024, 2025];
+/* The pool that figure 3 reads follows the "Campuses shown" control: the one campus chosen
+   under "one campus", otherwise the Universitywide aggregate (pool index -1), which
+   falls back to Berkeley only when the payload carries no Universitywide pool. */
+function fig3Pool() { return S.campmode === 'one' ? S.campone : (HAS_UW ? -1 : 0); }
 function fig3() {
   const svg = $('fig3'); clear(svg);
   const W = 900, H = 360, mL = 62, mR = 26, mT = 18, mB = 46;
-  const P = buildPanel({ ci: 0, pre: PRE, post: POST, ruler: 'census', gate: 20, ser: 'app', betaMode: 'pre' });
+  const pool = fig3Pool(), pname = poolLabel(pool);
+  const P = buildPanel({ ci: pool, pre: PRE, post: POST, ruler: 'census', gate: 20, ser: 'app', betaMode: 'pre' });
   if (!P.rows.length) return;
   const w = P.rows.map(r => r.w);
   const xs = P.rows.map(r => r.dC), ys = P.rows.map(r => r.dG);
@@ -224,7 +229,7 @@ function fig3() {
     el('text', { x: mL - 12, y: y(t) + 4, 'text-anchor': 'end' }, ax).textContent = sgn(t, 2);
   }
   el('text', { x: (mL + W - mR) / 2, y: H - 4, 'text-anchor': 'middle', class: 'axlab' }, g).textContent = 'change in the state test, percentage points';
-  el('text', { x: 13, y: (mT + H - mB) / 2, class: 'axlab', 'text-anchor': 'middle', transform: `rotate(-90 13 ${(mT + H - mB) / 2})` }, g).textContent = 'change in Berkeley-applicant grade average';
+  el('text', { x: 13, y: (mT + H - mB) / 2, class: 'axlab', 'text-anchor': 'middle', transform: `rotate(-90 13 ${(mT + H - mB) / 2})` }, g).textContent = `change in ${pname}-applicant grade average`;
   for (const r of P.rows) {
     if (r.dC < xlo || r.dC > xhi || r.dG < ylo || r.dG > yhi) continue;
     const me = r.si === S.si, me2 = r.si === S.si2;
@@ -236,9 +241,9 @@ function fig3() {
   let pct = null;
   if (mine) { let below = 0, tot = 0; for (let i = 0; i < iv.length; i++) { tot += iw[i]; if (iv[i] < mine.I) below += iw[i]; } pct = 100 * below / tot; }
   $('s3').innerHTML = mine
-    ? `Classes of 2016&ndash;2019 against 2023&ndash;2025, Berkeley applicants, at the ${P.rows.length.toLocaleString()} schools with enough of them. `
+    ? `Classes of 2016&ndash;2019 against 2023&ndash;2025, ${pname} applicants, at the ${P.rows.length.toLocaleString()} schools with enough of them. `
     + `<b>${SCH[S.si][1]}</b> sits at ${sgn(mine.dG, 3)} on grades against ${sgn(mine.dC, 1)} on the state test &mdash; an estimate of ${sgn(mine.I, 3)}, higher than ${fmt(pct, 0)} percent of California schools.`
-    : `Classes of 2016&ndash;2019 against 2023&ndash;2025, Berkeley applicants. This school does not send enough Berkeley applicants in both periods to appear.`;
+    : `Classes of 2016&ndash;2019 against 2023&ndash;2025, ${pname} applicants. This school does not send enough ${pname} applicants in both periods to appear.`;
 }
 
 /* ---- table -------------------------------------------------------------- */
