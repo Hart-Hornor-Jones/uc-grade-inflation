@@ -61,7 +61,7 @@ that recomputes the site's numbers independently. From `build\` (PowerShell):
     node   dump_js.js               # the browser's answers from ..\index.html
     python compare.py               # 2,359 values, 0 disagreements expected
     python verify_bands.py          # tab 4 against a second source file; 26,344 values
-    node   test_tools.js            # 219 headless assertions, all expected to pass
+    node   test_tools.js            # 222 headless assertions, all expected to pass
 
 `twin.py` reads the high-school source CSVs; set the environment variables listed
 in `build/README.md` (or edit the constants at the top of the script) before

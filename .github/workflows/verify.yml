@@ -1,0 +1,140 @@
+# The verification chain from build/README.md, run on every push and pull request.
+#
+# Every step that can run from the repository alone runs unconditionally and fails
+# the job on any disagreement, failed assertion or page error:
+#     build_site.py        must reproduce the committed index.html and methods.html byte for byte
+#     dump_js.js           the browser's answers (jsdom) from the built page
+#     compare.py           those answers against out/twin_expected.json: 0 disagreements
+#     test_tools.js        the headless assertions, 0 failures
+#     shot.js              every tab at 1360 px and 390 px in Playwright Chromium, 0 page errors
+#
+# twin.py and verify_bands.py recompute the expected values from the source CSVs,
+# which are not in the repository. They run only when a checkout step has placed the
+# files where the environment variables below say; otherwise the job records a
+# visible warning that they were skipped and compares against the committed
+# out/twin_expected.json and out/bands_expected.json instead. Nothing is skipped silently.
+name: verification chain
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: build
+    env:
+      PYTHONUTF8: '1'
+      # Paths of the private source CSVs (see build/README.md). Leave unset to compare
+      # against the committed expected files; set them (for example from a prior step
+      # that fetches the data) to recompute from the sources.
+      DV_NEW: ${{ vars.DV_NEW }}
+      DV_OLD: ${{ vars.DV_OLD }}
+      PAN: ${{ vars.PAN }}
+      SC: ${{ vars.SC }}
+      TC: ${{ vars.TC }}
+      BANDS_WIDE: ${{ vars.BANDS_WIDE }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: build/package-lock.json
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Python dependencies
+        run: python -m pip install --quiet 'numpy>=1.26' 'pandas>=2.2'
+
+      - name: build_site.py reproduces the committed pages
+        run: |
+          python build_site.py
+          if ! git -C .. diff --exit-code --stat -- index.html methods.html; then
+            echo '::error::build_site.py does not reproduce the committed index.html / methods.html; rebuild and commit them'
+            exit 1
+          fi
+          echo 'index.html and methods.html reproduced byte for byte' >> "$GITHUB_STEP_SUMMARY"
+
+      - name: npm ci (jsdom)
+        run: npm ci
+
+      - name: Are the source CSVs available?
+        id: sources
+        run: |
+          twin=true
+          for v in DV_NEW DV_OLD PAN SC TC; do
+            f="${!v}"
+            if [ -z "$f" ] || [ ! -f "$f" ]; then twin=false; fi
+          done
+          bands=true
+          if [ -z "$BANDS_WIDE" ] || [ ! -f "$BANDS_WIDE" ]; then bands=false; fi
+          echo "twin=$twin" >> "$GITHUB_OUTPUT"
+          echo "bands=$bands" >> "$GITHUB_OUTPUT"
+          echo "twin.py sources present: $twin; verify_bands.py source present: $bands"
+
+      - name: twin.py (independent recomputation from the source CSVs)
+        if: steps.sources.outputs.twin == 'true'
+        run: |
+          python twin.py
+          echo 'twin.py ran from the source CSVs and rewrote out/twin_expected.json' >> "$GITHUB_STEP_SUMMARY"
+
+      - name: twin.py SKIPPED (source CSVs not available)
+        if: steps.sources.outputs.twin != 'true'
+        run: |
+          echo '::warning title=twin.py skipped::The source CSVs (DV_NEW, DV_OLD, PAN, SC, TC) are not in this checkout. compare.py checks the browser against the COMMITTED out/twin_expected.json.'
+          echo 'twin.py SKIPPED: source CSVs not available; compare.py uses the committed out/twin_expected.json' >> "$GITHUB_STEP_SUMMARY"
+
+      - name: dump_js.js (the browser's answers, jsdom)
+        run: node dump_js.js
+
+      - name: compare.py (0 disagreements required)
+        run: |
+          python compare.py | tee compare.log
+          grep -E '^[0-9]+ values compared, 0 disagreements' compare.log
+          grep -q '^ALL CHECKS PASSED' compare.log
+          grep -E '^[0-9]+ values compared' compare.log >> "$GITHUB_STEP_SUMMARY"
+
+      - name: verify_bands.py (tab 4 against the wide harvest file)
+        if: steps.sources.outputs.bands == 'true'
+        run: |
+          python verify_bands.py
+          echo 'verify_bands.py ran from the wide harvest file and rewrote out/bands_expected.json' >> "$GITHUB_STEP_SUMMARY"
+
+      - name: verify_bands.py SKIPPED (harvest file not available)
+        if: steps.sources.outputs.bands != 'true'
+        run: |
+          echo '::warning title=verify_bands.py skipped::BANDS_WIDE (vizql_wide.csv) is not in this checkout. test_tools.js checks the browser against the COMMITTED out/bands_expected.json.'
+          echo 'verify_bands.py SKIPPED: harvest file not available; test_tools.js uses the committed out/bands_expected.json' >> "$GITHUB_STEP_SUMMARY"
+
+      - name: test_tools.js (0 failures required)
+        run: |
+          node test_tools.js | tee test_tools.log
+          grep -E '^[0-9]+ passed, 0 failed$' test_tools.log
+          grep -E '^[0-9]+ passed, [0-9]+ failed$' test_tools.log >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Install Playwright Chromium
+        run: |
+          npm install --no-save playwright
+          npx playwright install --with-deps chromium
+
+      - name: shot.js (every tab, two widths, 0 page errors required)
+        run: |
+          node shot.js | tee shot.log
+          grep -q '^no page errors$' shot.log
+          echo 'shot.js: all tabs rendered in Chromium at 1360 px and 390 px, no page errors' >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: shots
+          path: build/shots/
+          if-no-files-found: ignore

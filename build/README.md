@@ -142,7 +142,7 @@ tilt, and the subtitle reports both the separation tilt and the gap tilt.
     python compare.py               # asserts the two agree: 2,359 values, 0 disagreements expected
     python verify_bands.py          # tab 4, checked against a SECOND source file:
                                     # 26,344 values, 0 failures expected
-    node   test_tools.js            # 219 headless assertions: shell routing, style tokens,
+    node   test_tools.js            # 222 headless assertions: shell routing, style tokens,
                                     # the tab 1 triptych and its deep link, tab 4's
                                     # controls and masking, tab 3's separation measure,
                                     # survival curves and scatter, and all ported tools
@@ -157,6 +157,13 @@ the dashboard's own Overall sheet), pins 2010 top-tier four-year = 74.1%, the 20
 upper cut = 3.92, and the six-year top-minus-bottom gap inside 13.4-14.5 points (13.5 before UCOP's September 2026 data revision) in
 every mature cohort, and writes `out\bands_expected.json`, which `test_tools.js`
 then compares against what the browser actually computes.
+
+The same chain runs on every push and pull request in GitHub Actions
+(`.github/workflows/verify.yml`: Node 22, Python 3.12, Playwright Chromium). It fails
+on any disagreement, failed assertion or page error. `twin.py` and `verify_bands.py`
+need the private source CSVs, which are not in the repository; when the paths named
+above are not set the job says so in a visible warning and checks the browser against
+the committed `out\twin_expected.json` and `out\bands_expected.json` instead.
 
 `twin.py` also needs `DV_UW` (it defaults to `out\dv_admissions_uw.csv`). Its tab 1
 battery rounds each anchor exactly as the payload encoder rounds it — the payload stores
